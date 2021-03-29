@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">nested</string>
+
+    <string-array name="popularArray">
+        <item>Apple</item>
+        <item>Amazon</item>
+        <item>Tesla</item>
+        <item>Alibaba</item>
+        <item>Facebook</item>
+        <item>Acer</item>
+        <item>Tesla</item>
+        <item>Nokia</item>
+        <item>Nvidia</item>
+    </string-array>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,196 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <!-- HEADER -->
+            <LinearLayout
+                android:id="@+id/linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/search_bg"
+                        android:fontFamily="@font/montserrat"
+                        android:hint="Find company or ticker"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:paddingStart="50dp"
+                        android:paddingEnd="20dp"
+                        android:textSize="16sp"
+                        app:iconifiedByDefault="false"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <ImageButton
+                        android:id="@+id/back"
+                        android:layout_width="20dp"
+                        android:layout_height="14dp"
+                        android:background="@drawable/back"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+                        app:layout_constraintEnd_toEndOf="@+id/searchView"
+                        app:layout_constraintHorizontal_bias="0.033"
+                        app:layout_constraintStart_toStartOf="@+id/searchView"
+                        app:layout_constraintTop_toTopOf="@+id/searchView"
+                        app:layout_constraintVertical_bias="0.483" />
+
+                    <ImageButton
+                        android:id="@+id/search"
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/ellipse_434"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+                        app:layout_constraintEnd_toEndOf="@+id/searchView"
+                        app:layout_constraintHorizontal_bias="0.04"
+                        app:layout_constraintStart_toStartOf="@+id/searchView"
+                        app:layout_constraintTop_toTopOf="@+id/searchView"
+                        app:layout_constraintVertical_bias="0.517" />
+
+                    <ImageButton
+                        android:id="@+id/close"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/close"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+                        app:layout_constraintEnd_toEndOf="@+id/searchView"
+                        app:layout_constraintHorizontal_bias="0.969"
+                        app:layout_constraintStart_toStartOf="@+id/searchView"
+                        app:layout_constraintTop_toTopOf="@+id/searchView"
+                        app:layout_constraintVertical_bias="0.517" />
+
+                    <TextView
+                        android:id="@+id/polular"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/montserrat"
+                        android:text="Popular requsests"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="#1A1A1A"
+                        android:textSize="18sp"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/searchView" />
+
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipgrpup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@android:color/white"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/polular"
+                        app:singleSelection="true">
+
+                    </com.google.android.material.chip.ChipGroup>
+
+
+                    <TextView
+                        android:id="@+id/recent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/montserrat"
+                        android:text="You've Searched for this"
+                        android:textColor="#1A1A1A"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/chipgrpup" />
+
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupRecent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="30dp"
+                        android:background="@android:color/white"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="#1A1A1A"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/recent"
+                        app:singleSelection="true">
+
+                    </com.google.android.material.chip.ChipGroup>
+
+
+                    <TextView
+                        android:id="@+id/blank"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:text="Kludge"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="@android:color/white"
+                        android:textSize="800sp"
+                        android:visibility="gone"
+                        app:layout_constraintHorizontal_weight="1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/chipGroupRecent"
+                        app:layout_constraintVertical_weight="1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:clipToPadding="false"
+            app:layout_scrollFlags="noScroll"
+            app:tabIndicatorColor="@android:color/transparent"
+            app:tabMode="scrollable" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
