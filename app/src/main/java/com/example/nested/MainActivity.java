@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     ViewPager2 viewpager2;
     TabLayout tableLayout;
-     Typeface typefaceBold;
-     Typeface typefaceRegular;
+    Typeface typefaceBold;
+    Typeface typefaceRegular;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         tableLayout = findViewById(R.id.tabLayout);
 
-         typefaceBold = ResourcesCompat.getFont(MainActivity.this, R.font.montserratbold);
+        typefaceBold = ResourcesCompat.getFont(MainActivity.this, R.font.montserratbold);
         typefaceRegular = ResourcesCompat.getFont(MainActivity.this, R.font.montserratregular);
 
 
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 inputText.setSelection(inputText.getText().length());
                 addToResent(recentArray, inputText.getText().toString());
                 refreshChip(popularArray, chipGroup);
+                refreshChip(recentArray, chipGroupRecent);
                 StocksFragment.Search(inputText.getText().toString());
                 tableLayout.getTabAt(0).select();
                 linearLayout.setVisibility(View.GONE);
@@ -204,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     viewpager2.setVisibility(View.VISIBLE);
                     onHideKeyoard();
                     inputText.clearFocus();
-
+                    refreshChip(recentArray, chipGroupRecent);
                     tableLayout.getTabAt(0).select();
                     return true;
                 }
@@ -288,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshChip(ArrayList<String> array, ChipGroup chipGroup) {
+
         chipGroup.removeAllViews();
         createChip(array, chipGroup);
     }
@@ -333,6 +336,10 @@ public class MainActivity extends AppCompatActivity {
             inputText.clearFocus();
             onHideKeyoard();
             inputText.setHint(R.string.hint_string);
+
+        } else if (StocksFragment.backSearchFlag) {
+            StocksFragment.loadStockFromDB();
+            StocksFragment.stockRefresh();
         } else {
             super.onBackPressed();
         }

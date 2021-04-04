@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +42,8 @@ public class StocksFragment extends Fragment {
     public static int page = 0;
     public static int searchFlag = 0;
     public static int refreshFlag = 0;
-
     static LinearLayoutManager layoutManager;
+    static   boolean backSearchFlag=false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,13 +52,11 @@ public class StocksFragment extends Fragment {
         refreshLayout = fragmentView.findViewById(R.id.swipeLayout);
         nestedScrollView = fragmentView.findViewById(R.id.scroll_view);
         recyclerView = fragmentView.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
         recyclerAdapter = new ParseAdapter(arrayTicker, getActivity());
         recyclerView.setAdapter(recyclerAdapter);
         tickerDB2 = new TickerDB2(getActivity());
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
 
         isFirstStart();
 
@@ -68,7 +66,7 @@ public class StocksFragment extends Fragment {
             public void onRefresh() {
                 refreshFlag = 1;
                 try {
-                    stockRefresh();
+                    stockUpdate();
                     loadStockFromDB();
                 } catch (IOException | ExecutionException | InterruptedException e) {
                     e.printStackTrace();
@@ -82,7 +80,8 @@ public class StocksFragment extends Fragment {
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) { //достигли kонечной позиции
                     try {
-                        stockRefresh();
+
+                        stockUpdate();
                     } catch (IOException | ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -101,7 +100,7 @@ public class StocksFragment extends Fragment {
         if (pages == 0) {
             createTableOnFirstStart();
             try {
-                stockRefresh();
+                stockUpdate();
             } catch (IOException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -120,18 +119,19 @@ public class StocksFragment extends Fragment {
         BackgroundTask backgroundTask = new BackgroundTask();
         backgroundTask.execute("search", userInput);
         searchFlag = 1;
+        backSearchFlag=true;
     }
 
 
-    private void stockRefresh() throws IOException, ExecutionException, InterruptedException {
-
+    private void stockUpdate() throws IOException, ExecutionException, InterruptedException {
+        backSearchFlag=false;
         CheckInternet checkInternet = new CheckInternet();
         checkInternet.execute().get();
         if (checkInternet.isOnline) {
             if (searchFlag == 1) {
                 arrayTicker.clear();
                 searchFlag = 0;
-                Log.e("!!!!запуска!!!!!", "searchfalag " + searchFlag);
+
             }
             BackgroundTask backgroundTask = new BackgroundTask();
             backgroundTask.execute("stock", null);
@@ -144,7 +144,7 @@ public class StocksFragment extends Fragment {
                             try {
                                 CheckInternet checkInternet = new CheckInternet();
                                 checkInternet.execute().get();
-                                stockRefresh();
+                                stockUpdate();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
@@ -165,6 +165,12 @@ public class StocksFragment extends Fragment {
         refreshLayout.setRefreshing(false);
     }
 
+    public static void stockRefresh() {
+        loadStockFromDB();
+        recyclerAdapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(false);
+    }
+
     private static class BackgroundTask extends AsyncTask<String, String, Void> {
 
         @Override
@@ -177,7 +183,8 @@ public class StocksFragment extends Fragment {
                     try {
                         page++;
                         if (refreshFlag == 1) {
-                            page=1;
+                            page--;
+                            refreshFlag=0;
                         }
                         tmpArrayTicker.addAll(ParseQuery.extractTickers(page));
                     } catch (JSONException ed) {
@@ -214,24 +221,18 @@ public class StocksFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+
             if (searchFlag == 1) {
+                saveStockToDB(arrayTicker);
                 searchFlag = 0;
             }
-            if (refreshFlag == 1) {
-                refreshFlag = 0;
+            else {
                 arrayTicker.clear();
-                arrayTicker.addAll(tmpArrayTicker);
-                tmpArrayTicker.clear();
+                saveStockToDB(tmpArrayTicker);
+                loadStockFromDB();
+
             }
-
-
-
-            saveStockToDB();
-
-
-            arrayTicker.addAll(tmpArrayTicker);
-            tmpArrayTicker.clear();
-
 
             recyclerAdapter.notifyDataSetChanged();
             refreshLayout.setRefreshing(false);
@@ -245,7 +246,8 @@ public class StocksFragment extends Fragment {
     }
 
 
-    public void loadStockFromDB() {
+    public static void loadStockFromDB() {
+        backSearchFlag=false;
         if (arrayTicker != null) {
             arrayTicker.clear();
         }
@@ -253,8 +255,9 @@ public class StocksFragment extends Fragment {
         SQLiteDatabase db = tickerDB2.getReadableDatabase();
         Cursor cursor = tickerDB2.select_all();
         try {
+            cursor.moveToFirst();
             while (cursor.moveToNext()) {
-                String id = cursor.getString(cursor.getColumnIndex(TickerDB2.ID));
+                  String id = cursor.getString(cursor.getColumnIndex(TickerDB2.ID));
                 String pic = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_PIC));
                 String tickerName = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_TICKERNAME));
                 String companyName = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_COMPANYNAME));
@@ -267,15 +270,16 @@ public class StocksFragment extends Fragment {
                 arrayTicker.add(Item);
             }
         } finally {
+
             if (cursor != null && cursor.isClosed())
                 cursor.close();
             db.close();
         }
     }
 
-    public static void saveStockToDB() {
+    public static void saveStockToDB(ArrayList<Ticker>arrayList) {
 
-        for (Ticker item : arrayTicker) {
+        for (Ticker item : arrayList) {
             tickerDB2.insertIntoTheDatabase(item.getId(), item.getPic(), item.getTickerName(), item.getCompanyName(),
                     item.getPrice(), item.getDeltaPrice(), item.getIsFavourite(), item.getOldprice(), item.getCurrency());
         }

@@ -193,7 +193,7 @@ public class ParseQuery {
                                         JSONObject properties = jarray.optJSONObject(Integer.toString(i));
                                         String tickerName = properties.optString("short_name");
                                         String companyName = properties.optString("name");
-                                        tickersTmp.add(new Ticker(String.valueOf(i), null, tickerName, companyName, "null", "null", "0","null", "null"));
+                                        tickersTmp.add(new Ticker(String.valueOf(i), null, tickerName, companyName, "null", "null", "0","null", " "));
                                         count++;
                                 }
                         }
@@ -260,7 +260,7 @@ public class ParseQuery {
                                 String tickerName = jsobject.optString("symbol");
                                 String companyName = jsobject.optString("description");
 
-                                tickersTmp.add(new Ticker(null, null, tickerName.toUpperCase(), companyName, "null", "null", "0","null", "null"));
+                                tickersTmp.add(new Ticker(String.valueOf(searchCount), null, tickerName.toUpperCase(), companyName, "null", "null", "0","null", " "));
                                 searchCount++;
                         }
                 } catch (JSONException e) {
