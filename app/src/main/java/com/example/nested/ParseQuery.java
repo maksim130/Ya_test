@@ -279,6 +279,8 @@ public class ParseQuery {
                                 return "₽";
                         case "EUR":
                                 return "€";
+                        case "null":
+                                return " ";
                         default:
                                 return currency;
                 }

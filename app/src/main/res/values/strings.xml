@@ -14,4 +14,7 @@
     </string-array>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="popular_requsests">Popular requsests</string>
+    <string name="hint_string">Find company or ticker</string>
+    <string name="you_ve_searched_for_this">You\'ve searched for this</string>
 </resources>

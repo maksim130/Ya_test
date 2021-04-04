@@ -60,24 +60,7 @@ public class StocksFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
 
-        SharedPreferences prefs = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        final Integer pages = prefs.getInt("firstStart", 0);
-        if (pages == 0) {
-            createTableOnFirstStart();
-            try {
-                stockRefresh();
-            } catch (IOException | ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            recyclerAdapter.notifyDataSetChanged();
-            refreshLayout.setRefreshing(true);
-            loadStockFromDB();
-            recyclerAdapter.notifyDataSetChanged();
-            refreshLayout.setRefreshing(false);
-
-        }
+        isFirstStart();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -108,6 +91,29 @@ public class StocksFragment extends Fragment {
         });
 
         return fragmentView;
+    }
+
+
+
+    public  void isFirstStart() {
+        SharedPreferences prefs = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        final Integer pages = prefs.getInt("firstStart", 0);
+        if (pages == 0) {
+            createTableOnFirstStart();
+            try {
+                stockRefresh();
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            recyclerAdapter.notifyDataSetChanged();
+            refreshLayout.setRefreshing(true);
+            loadStockFromDB();
+            recyclerAdapter.notifyDataSetChanged();
+            refreshLayout.setRefreshing(false);
+
+        }
     }
 
     public static void Search(String userInput) {

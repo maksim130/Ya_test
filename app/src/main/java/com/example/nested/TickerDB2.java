@@ -102,6 +102,6 @@ public class TickerDB2 extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "UPDATE " + TickerDB2.TABLE_NAME + " SET  " + TickerDB2.COLUMN_PRICE + "  = " + " '" +price+ "' " + " WHERE " + " tickername " + "  = " + " '" +tickername+ "' ";
         db.execSQL(sql);
-        // Log.d("!!!!запуска!!!!!", "update_price_DB "+tickername+price);
+        // Log.d("!!!!!!!!!", "update_price_DB "+tickername+price);
     }
 }

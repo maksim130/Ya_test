@@ -3,17 +3,14 @@ package com.example.nested;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.fonts.Font;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,8 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
+
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.chip.Chip;
@@ -31,20 +28,26 @@ import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     String input;
-    EditText userInput;
+    TextInputLayout searchView;
     private ChipGroup chipGroup;
     ArrayList<String> recentArray;
     private ChipGroup chipGroupRecent;
-    TextView popular, recent, blank;
-    ImageButton search, back, close;
+    TextView popular, recent;
+    TextInputEditText inputText;
+    LinearLayout linearLayout;
+    ViewPager2 viewpager2;
+    TabLayout tableLayout;
+     Typeface typefaceBold;
+     Typeface typefaceRegular;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        ViewPager2 viewpager2 = findViewById(R.id.viewpager);
+        viewpager2 = findViewById(R.id.viewpager);
         viewpager2.setAdapter(new TabAdapter(this));
 
-        final TabLayout tableLayout = findViewById(R.id.tabLayout);
+        tableLayout = findViewById(R.id.tabLayout);
 
-        final Typeface typeface = ResourcesCompat.getFont(MainActivity.this, R.font.montserratbold);
-        final Typeface typeface2 = ResourcesCompat.getFont(MainActivity.this, R.font.montserratregular);
+         typefaceBold = ResourcesCompat.getFont(MainActivity.this, R.font.montserratbold);
+        typefaceRegular = ResourcesCompat.getFont(MainActivity.this, R.font.montserratregular);
 
 
         final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
@@ -98,14 +101,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 ((TextView) tab.getCustomView()).setTextSize(28);
-                ((TextView) tab.getCustomView()).setTypeface(typeface, Typeface.BOLD);
+                ((TextView) tab.getCustomView()).setTypeface(typefaceBold, Typeface.BOLD);
                 ((TextView) tab.getCustomView()).setTextColor(Color.parseColor("#1A1A1A"));
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 ((TextView) tab.getCustomView()).setTextSize(18);
-                ((TextView) tab.getCustomView()).setTypeface(typeface2, Typeface.NORMAL);
+                ((TextView) tab.getCustomView()).setTypeface(typefaceRegular, Typeface.BOLD);
                 ((TextView) tab.getCustomView()).setTextColor(Color.parseColor("#BABABA"));
             }
 
@@ -115,15 +118,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        userInput = findViewById(R.id.searchView);
+        searchView = findViewById(R.id.searchView);
+        inputText = findViewById(R.id.inputTextView);
         popular = findViewById(R.id.polular);
         recent = findViewById(R.id.recent);
         chipGroup = findViewById(R.id.chipgrpup);
         chipGroupRecent = findViewById(R.id.chipGroupRecent);
-        search = findViewById(R.id.search);
-        back = findViewById(R.id.back);
-        close = findViewById(R.id.close);
-        blank = findViewById(R.id.blank);
+        linearLayout = findViewById(R.id.linear_carrier);
+        searchView.setEndIconVisible(false);
 
 
         final ArrayList<String> popularArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.popularArray)));
@@ -131,18 +133,18 @@ public class MainActivity extends AppCompatActivity {
 
         loadArrayRecent();
 
-        userInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        inputText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    chipGroup.setVisibility(View.VISIBLE);
-                    popular.setVisibility(View.VISIBLE);
-                    chipGroupRecent.setVisibility(View.VISIBLE);
-                    recent.setVisibility(View.VISIBLE);
-                    search.setVisibility(View.GONE);
-                    back.setVisibility(View.VISIBLE);
-                    blank.setVisibility(View.VISIBLE);
+                    linearLayout.setVisibility(View.VISIBLE);
+                    tableLayout.setVisibility(View.GONE);
+                    viewpager2.setVisibility(View.GONE);
+                    searchView.setStartIconDrawable(R.drawable.back);
+                    inputText.setHint("");
                 }
+
+
             }
         });
 
@@ -154,17 +156,17 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(ChipGroup group, int checkedId) {
 
 
-                userInput.setText(((Chip) group.getChildAt(checkedId)).getText().toString());
-                userInput.setSelection(userInput.getText().length());
-                addToResent(recentArray, userInput.getText().toString());
+                inputText.setText(((Chip) group.getChildAt(checkedId)).getText().toString());
+                inputText.setSelection(inputText.getText().length());
+                addToResent(recentArray, inputText.getText().toString());
                 refreshChip(popularArray, chipGroup);
-                StocksFragment.Search(userInput.getText().toString());
+                StocksFragment.Search(inputText.getText().toString());
                 tableLayout.getTabAt(0).select();
-                chipGroupRecent.setVisibility(View.GONE);
-                chipGroup.setVisibility(View.GONE);
-                popular.setVisibility(View.GONE);
-                recent.setVisibility(View.GONE);
-                blank.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.GONE);
+                tableLayout.setVisibility(View.VISIBLE);
+                viewpager2.setVisibility(View.VISIBLE);
+
+                inputText.clearFocus();
                 onHideKeyoard();
 
             }
@@ -174,38 +176,36 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCheckedChanged(ChipGroup group, int checkedId) {
-                userInput.setText(((Chip) group.getChildAt(checkedId - 10)).getText().toString());
-                userInput.setSelection(userInput.getText().length());
-                addToResent(recentArray, userInput.getText().toString());
+                inputText.setText(((Chip) group.getChildAt(checkedId - 10)).getText().toString());
+                inputText.setSelection(inputText.getText().length());
+                addToResent(recentArray, inputText.getText().toString());
                 refreshChip(recentArray, chipGroupRecent);
-                StocksFragment.Search(userInput.getText().toString());
+                StocksFragment.Search(inputText.getText().toString());
                 tableLayout.getTabAt(0).select();
-                chipGroupRecent.setVisibility(View.GONE);
-                chipGroup.setVisibility(View.GONE);
-                popular.setVisibility(View.GONE);
-                recent.setVisibility(View.GONE);
-                blank.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.GONE);
+                tableLayout.setVisibility(View.VISIBLE);
+                viewpager2.setVisibility(View.VISIBLE);
+
+                inputText.clearFocus();
                 onHideKeyoard();
             }
         });
 
-        userInput.setOnKeyListener(new View.OnKeyListener() {
+        inputText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    input = userInput.getText().toString();
+                    input = searchView.getEditText().getText().toString();
                     addToResent(recentArray, input);
-                    StocksFragment.Search(userInput.getText().toString());
-                    chipGroupRecent.setVisibility(View.GONE);
-                    chipGroup.setVisibility(View.GONE);
-                    popular.setVisibility(View.GONE);
-                    recent.setVisibility(View.GONE);
-                    blank.setVisibility(View.GONE);
+                    StocksFragment.Search(input);
+                    linearLayout.setVisibility(View.GONE);
+                    tableLayout.setVisibility(View.VISIBLE);
+                    viewpager2.setVisibility(View.VISIBLE);
                     onHideKeyoard();
-                    tableLayout.getTabAt(0).select();
+                    inputText.clearFocus();
 
+                    tableLayout.getTabAt(0).select();
                     return true;
                 }
                 return false;
@@ -213,42 +213,32 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        userInput.setOnClickListener(new View.OnClickListener() {
+
+        searchView.setStartIconOnClickListener(new View.OnClickListener() { //search back press
             @Override
             public void onClick(View v) {
-                chipGroup.setVisibility(View.VISIBLE);
-                popular.setVisibility(View.VISIBLE);
-                chipGroupRecent.setVisibility(View.VISIBLE);
-                recent.setVisibility(View.VISIBLE);
-                search.setVisibility(View.GONE);
-                back.setVisibility(View.VISIBLE);
-                blank.setVisibility(View.VISIBLE);
+
+                searchView.setStartIconDrawable(R.drawable.ellipse_434);
+                linearLayout.setVisibility(View.GONE);
+                tableLayout.setVisibility(View.VISIBLE);
+                viewpager2.setVisibility(View.VISIBLE);
+                searchView.getEditText().getText().clear();
+                inputText.clearFocus();
+                onHideKeyoard();
+                inputText.setHint(R.string.hint_string);
             }
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
+
+        searchView.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                chipGroup.setVisibility(View.GONE);
-                popular.setVisibility(View.GONE);
-                recent.setVisibility(View.GONE);
-                chipGroupRecent.setVisibility(View.GONE);
-                userInput.getText().clear();
-                search.setVisibility(View.VISIBLE);
-                back.setVisibility(View.GONE);
-                userInput.clearFocus();
-                blank.setVisibility(View.GONE);
+                searchView.getEditText().getText().clear();
             }
         });
 
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userInput.getText().clear();
-            }
-        });
 
-        userInput.addTextChangedListener(new TextWatcher() {
+        inputText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -257,15 +247,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
-                    close.setVisibility(View.VISIBLE);
+                    searchView.setEndIconVisible(true);
                 } else {
-                    close.setVisibility(View.GONE);
+                    searchView.setEndIconVisible(false);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
@@ -276,9 +265,10 @@ public class MainActivity extends AppCompatActivity {
             Chip chip = new Chip(this);
             ChipDrawable drawable = ChipDrawable.createFromAttributes(this, null, 0, R.style.Widget_MaterialComponents_Chip_Choice);
             chip.setChipDrawable(drawable);
-            chip.setPadding(10, 6, 0, 6);
+            chip.setPadding(2, 0, 2, 8);
             chip.setText(array.get(i));
             chip.setTextSize(12);
+            chip.setTypeface(typefaceRegular, Typeface.NORMAL);
             chipGroup.addView(chip);
             if (chipGroup.getId() == R.id.chipgrpup) {
                 chip.setId(i);
@@ -331,4 +321,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if (linearLayout.getVisibility() == View.VISIBLE) {
+            searchView.setStartIconDrawable(R.drawable.ellipse_434);
+            linearLayout.setVisibility(View.GONE);
+            tableLayout.setVisibility(View.VISIBLE);
+            viewpager2.setVisibility(View.VISIBLE);
+            searchView.getEditText().getText().clear();
+            inputText.clearFocus();
+            onHideKeyoard();
+            inputText.setHint(R.string.hint_string);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

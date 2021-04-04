@@ -32,7 +32,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
     @NonNull
     @Override
     public FavouriteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticer_item2,
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticer_item_fav,
                 parent, false);
         tickerDB2 = new TickerDB2(context);
         return new ViewHolder(view);
