@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -21,7 +22,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
 
     private Context context;
     private ArrayList<Ticker> arrayFavTicker;
-    private TickerDB tickerDB;
+    private TickerDB2 tickerDB2;
 
     public FavouriteAdapter(ArrayList<Ticker> arrayFavTicker, Context context) {
         this.context = context;
@@ -33,20 +34,22 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
     public FavouriteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticer_item2,
                 parent, false);
-        tickerDB = new TickerDB(context);
+        tickerDB2 = new TickerDB2(context);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FavouriteAdapter.ViewHolder holder, int position) {
 
-
+        if(position%2==0) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#F0F4F7"));
+        }
         holder.tickerName.setText(arrayFavTicker.get(position).getTickerName());
         holder.companyName.setText(arrayFavTicker.get(position).getCompanyName());
         holder.price.setText(arrayFavTicker.get(position).getPrice());
         holder.deltaPrice.setText(arrayFavTicker.get(position).getDeltaPrice());
 
-        if (arrayFavTicker.get(position).getDeltaPrice().startsWith("+")) {
+        if (arrayFavTicker.get(position).getDeltaPrice()!=null&&arrayFavTicker.get(position).getDeltaPrice().startsWith("+")) {
             holder.deltaPrice.setTextColor(Color.parseColor("#008500"));
         } else {
             holder.deltaPrice.setTextColor(Color.parseColor("#FF0000"));
@@ -72,10 +75,12 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
         ImageButton favourite;
         TextView price;
         TextView deltaPrice;
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            cardView = itemView.findViewById(R.id.card_view_item2);
             companyPic = itemView.findViewById(R.id.companyPic);
             tickerName = itemView.findViewById(R.id.tickerName);
             companyName = itemView.findViewById(R.id.companyName);
@@ -89,10 +94,11 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     final Ticker favTicker = arrayFavTicker.get(position);
-                    tickerDB.remove_fav(favTicker.getId());
+                    tickerDB2.remove_fav(favTicker.getTickerName());
                     arrayFavTicker.remove(position);
                     notifyDataSetChanged();
-                    StocksFragment.FavouriteRefresh();
+                    StocksFragment.favouriteRefresh();
+                    new FavouriteFragment().webSocketRefresh();
                 }
             });
         }

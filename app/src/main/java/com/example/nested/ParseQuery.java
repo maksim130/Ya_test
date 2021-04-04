@@ -1,6 +1,7 @@
 package com.example.nested;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,23 +25,26 @@ import java.util.ArrayList;
 public class ParseQuery {
 
         public static final String LOG_TAG = ParseQuery.class.getSimpleName();
-        public static final String URL_INITIAL_LIST = "https://fcsapi.com/api-v3/stock/list?exchange=nyse,nasdaq,paris&access_key=Onjp1M5scMuw94IofYSImHNgq";
+        public static final String URL_INITIAL_LIST = "https://fcsapi.com/api-v3/stock/list?exchange=nyse,nasdaq,paris&access_key=jArCLjeaTtxlZo6G5QtB16To";
         public static String decimal_format = "#0.00";
         public static ArrayList<Ticker> arrayTicker = new ArrayList<>();
         public static ArrayList<Ticker> searchArrayTicker;
         public static String jsonResponse;
         public static int count;
-        public static int searchCount = 100;
+        public static int searchCount = 1000;
+        public static int pages;
 
 
-        public static ArrayList<Ticker> extractTickers() throws JSONException, IOException {
+        public static ArrayList<Ticker> extractTickers(int page) throws JSONException, IOException {
                 count = 0;
-
+                pages = page;
                 URL url = createUrl(URL_INITIAL_LIST);
                 jsonResponse = null;
                 jsonResponse = makeHttpRequest(url);
                 arrayTicker = extractInitialFromApi(jsonResponse);
-
+                if (arrayTicker==null){
+                        return arrayTicker;
+                }
                 for (int x = 0; x < arrayTicker.size(); x++) {
                         String urlForImg = "https://finnhub.io/api/v1/stock/profile2?symbol=" + arrayTicker.get(x).getTickerName() + "&token=c114p3f48v6t4vgvtshg"; //img
                         url = createUrl(urlForImg);
@@ -56,7 +60,6 @@ public class ParseQuery {
 
                         count++;
                 }
-
                 return arrayTicker;
         }
 
@@ -64,23 +67,41 @@ public class ParseQuery {
         public static ArrayList<Ticker> extractSearchTickers(CharSequence charSequence) throws JSONException, IOException {
                 searchCount++;
                 searchArrayTicker = new ArrayList<>();
+                ArrayList<Ticker> tickersTmp = new ArrayList<>();
+
 
                 String requestUrl = "https://finnhub.io/api/v1/search?q=" + charSequence.toString().toLowerCase().trim() + "&token=c114p3f48v6t4vgvtshg";
 
-                URL url = createUrl(requestUrl);
                 jsonResponse = null;
-                jsonResponse = makeHttpRequest(url);
-                searchArrayTicker.addAll(searchExtractFromApi(jsonResponse));
+                jsonResponse = makeHttpRequest(createUrl(requestUrl));
+                tickersTmp= searchExtractFromApi(jsonResponse);
+                if (tickersTmp==null){
+                        return searchArrayTicker;
+                }
 
-
-                for (int x = 0; x < searchArrayTicker.size(); x++) {
-                        String urlForPic = "https://finnhub.io/api/v1/stock/profile2?symbol=" + searchArrayTicker.get(x).getTickerName() + "&token=c114p3f48v6t4vgvtshg"; //img
+                for (int x = 0; x < tickersTmp.size(); x++) {
+                        String urlForPic = "https://finnhub.io/api/v1/stock/profile2?symbol=" + tickersTmp.get(x).getTickerName() + "&token=c114p3f48v6t4vgvtshg"; //img
                         jsonResponse = null;
                         jsonResponse = makeHttpRequest(createUrl(urlForPic));
-                        if (jsonResponse.equals("{}")) {
-                        } else {
-                                extractImgFromApi2(jsonResponse, x, searchArrayTicker);
+                        if (!jsonResponse.equals("{}")) {
+                                extractImgFromApi2(jsonResponse, x, tickersTmp);
                         }
+
+                        String urlForPrice = "https://finnhub.io/api/v1/quote?symbol=" + tickersTmp.get(x).getTickerName() + "&token=c114p3f48v6t4vgvtshg";//price
+                        jsonResponse = null;
+                        jsonResponse = makeHttpRequest(createUrl(urlForPrice));
+                        if (!jsonResponse.equals("{}")) {
+                                extractPriceFromApi3(jsonResponse, x, tickersTmp);
+                        }
+
+
+                        Ticker tiker = tickersTmp.get(x);
+                        if (tiker.getPrice().equals("null") && tiker.getDeltaPrice().equals("null")) {
+                        }
+                        else {
+                                searchArrayTicker.add(tiker);
+                        }
+
                 }
                 return searchArrayTicker;
         }
@@ -116,6 +137,7 @@ public class ParseQuery {
 
 
                         if (urlConnection.getResponseCode() == 200) {
+
                                 inputStream = urlConnection.getInputStream();
                                 jsonResponse = inputStreamReader(inputStream);
                         } else {
@@ -131,7 +153,6 @@ public class ParseQuery {
                                 inputStream.close();
                         }
                 }
-
                 return jsonResponse;
         }
 
@@ -153,6 +174,9 @@ public class ParseQuery {
 
         public static ArrayList<Ticker> extractInitialFromApi(String jsonResponse) {
 
+                int to = pages * 12;
+                int from = to - 12;
+
                 if (TextUtils.isEmpty(jsonResponse)) {
                         Log.e("extractInitialFromApi", "Empty");
                         return null;
@@ -164,12 +188,12 @@ public class ParseQuery {
                         JSONObject jobject = new JSONObject(jsonResponse);
                         JSONObject jarray = jobject.getJSONObject("response");
 
-                        for (int i = 0; i < 12; i++) {  //Пейджинг не реализован, поэтому так
+                        for (int i = from; i < to; i++) {
                                 if (jarray.has(Integer.toString(i))) {
                                         JSONObject properties = jarray.optJSONObject(Integer.toString(i));
                                         String tickerName = properties.optString("short_name");
                                         String companyName = properties.optString("name");
-                                        tickersTmp.add(new Ticker(String.valueOf(count), null, tickerName, companyName, "null", "null", "null", "null"));
+                                        tickersTmp.add(new Ticker(String.valueOf(i), null, tickerName, companyName, "null", "null", "0","null", "null"));
                                         count++;
                                 }
                         }
@@ -186,7 +210,9 @@ public class ParseQuery {
                         String pic = jobject.optString("logo");
                         array.get(x).setPic(pic);
                         String currency = jobject.optString("currency");
-                        array.get(x).setCurrency(currency);
+
+                        array.get(x).setCurrency(chooseCurrency(currency));
+
                 } catch (JSONException ex) {
                         ex.printStackTrace();
                 }
@@ -196,13 +222,15 @@ public class ParseQuery {
 
         public static ArrayList<Ticker> extractPriceFromApi3(String jsonResponse, int x, ArrayList<Ticker> array) {
 
-                String currency = chooseCurrency(arrayTicker.get(x).getCurrency());
+                String currency = array.get(x).getCurrency();
 
                 try {
                         JSONObject jobject = new JSONObject(jsonResponse);
                         String price = jobject.optString("c");
                         array.get(x).setPrice(currency + " " + price);
+
                         String previousPrice = jobject.optString("pc");
+                        array.get(x).setOldprice(previousPrice);
 
                         String deltaCont = deltaCount(previousPrice, price, currency);
                         array.get(x).setDeltaPrice(deltaCont);
@@ -222,7 +250,6 @@ public class ParseQuery {
                 }
 
                 ArrayList<Ticker> tickersTmp = new ArrayList<>();
-                ArrayList<Ticker> clearTickersTmp = new ArrayList<>();
                 try {
                         JSONObject jobject = new JSONObject(jsonResponse);
                         int counts = Integer.valueOf(jobject.optString("count"));
@@ -233,31 +260,17 @@ public class ParseQuery {
                                 String tickerName = jsobject.optString("symbol");
                                 String companyName = jsobject.optString("description");
 
-                                tickersTmp.add(new Ticker(String.valueOf(searchCount), null, tickerName.toUpperCase(), companyName, "null", "null", "0", "null"));
-
-                                String urlForPrice = "https://finnhub.io/api/v1/quote?symbol=" + tickersTmp.get(0).getTickerName() + "&token=c114p3f48v6t4vgvtshg";//price
-
-                                jsonResponse = null;
-                                jsonResponse = makeHttpRequest(createUrl(urlForPrice));
-                                extractPriceFromApi3(jsonResponse, 0, tickersTmp);
-                                //если для найденого тикера нет стоимости и дельты, то считаем тикер мусорным
-                                Ticker tiker = tickersTmp.get(0);
-                                if (tiker.getPrice().equals("null") && tiker.getDeltaPrice().equals("null")) {
-                                        tickersTmp.clear();
-                                } else {
-                                        clearTickersTmp.add(tiker);
-                                        tickersTmp.clear();
-                                }
+                                tickersTmp.add(new Ticker(null, null, tickerName.toUpperCase(), companyName, "null", "null", "0","null", "null"));
                                 searchCount++;
                         }
-                } catch (JSONException | IOException e) {
-                        Log.e("searchExtractFromApi", "Problem with Search", e);
+                } catch (JSONException e) {
+                        Log.e("searchExtractFromApi", "Problem with Search");
                 }
-                return clearTickersTmp;
+                return tickersTmp;
         }
 
 
-        private static String chooseCurrency(String currency) {
+        public static String chooseCurrency(String currency) {
 
                 switch (currency) {
                         case "USD":
@@ -272,8 +285,9 @@ public class ParseQuery {
         }
 
 
-        private static String deltaCount(String previousPrice, String price, String currency) {
+        public static String deltaCount(String previousPrice, String price, String currency) {
                 double percent;
+                String scurreny = chooseCurrency(currency);
                 try {
                         double a = Double.parseDouble(previousPrice);
                         double b = Double.parseDouble(price);
@@ -282,11 +296,11 @@ public class ParseQuery {
 
                         if (delta >= 0) {
                                 percent = (delta / b) * 100.;
-                                return "+" + currency + new DecimalFormat(decimal_format).format(delta) + " (" + new DecimalFormat(decimal_format).format(percent) + "%)";
+                                return "+" + scurreny + new DecimalFormat(decimal_format).format(delta) + " (" + new DecimalFormat(decimal_format).format(percent) + "%)";
 
                         } else {
                                 percent = (delta * (-1) / b) * 100.;
-                                return "-" + currency + new DecimalFormat(decimal_format).format(delta * -1) + " (" + new DecimalFormat(decimal_format).format(percent) + "%)";
+                                return "-" + scurreny + new DecimalFormat(decimal_format).format(delta * -1) + " (" + new DecimalFormat(decimal_format).format(percent) + "%)";
                         }
                 } catch (Exception e) {
                         return null;

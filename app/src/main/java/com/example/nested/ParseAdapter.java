@@ -1,31 +1,32 @@
 package com.example.nested;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> { //StockFragment adapter
 
     private ArrayList<Ticker> arrayTicker;
     private Context context;
-    private static TickerDB tickerDB;
-
+    private static TickerDB2 tickerDB2;
     public ParseAdapter(ArrayList<Ticker> arrayTicker, Context context) {
         this.arrayTicker = arrayTicker;
         this.context = context;
@@ -35,14 +36,10 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
     @NonNull
     @Override
     public ParseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        tickerDB = new TickerDB(context);
-        SharedPreferences prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        boolean firstStart = prefs.getBoolean("firstStart", true);
-        if (firstStart) {
-            createTableOnFirstStart();
-        }
 
+        tickerDB2 = new TickerDB2(context);
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticker_item, parent, false);
+
         return new ViewHolder(view);
     }
 
@@ -59,6 +56,11 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
         holder.price.setText(parseItem.getPrice());
         holder.deltaPrice.setText(parseItem.getDeltaPrice());
 
+        if(position%2==0) {
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#F0F4F7"));
+        }
+
+
         if (parseItem.getDeltaPrice()!=null && parseItem.getDeltaPrice().startsWith("+")) {
             holder.deltaPrice.setTextColor(Color.parseColor("#008500"));
         } else {
@@ -70,6 +72,8 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
         } else {
             Picasso.get().load(parseItem.getPic()).error(R.drawable.no_logo).into(holder.companyPic);
         }
+
+
     }
 
     @Override
@@ -86,10 +90,12 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
         ImageButton favourite;
         TextView price;
         TextView deltaPrice;
-
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            cardView = itemView.findViewById(R.id.card_view_item);
             companyPic = itemView.findViewById(R.id.companyPic);
             tickerName = itemView.findViewById(R.id.tickerName);
             companyName = itemView.findViewById(R.id.companyName);
@@ -104,20 +110,25 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
                     Ticker ticker = arrayTicker.get(position);
                     if (ticker.getIsFavourite().equals("1")) {
                         ticker.setIsFavourite("0");
-                        tickerDB.remove_fav(ticker.getId());
+                        tickerDB2.remove_fav(ticker.getTickerName());
                         favourite.setBackgroundResource(R.drawable.empty_star);
 
-                        StocksFragment.FavouriteRefresh();
-                        FavouriteFragment.FavouriteRefresh();
+                        StocksFragment.favouriteRefresh();
+                        FavouriteFragment.favouriteRefresh();
+                        new FavouriteFragment().webSocketRefresh();
 
                     } else {
                         ticker.setIsFavourite("1");
-                        tickerDB.insertIntoTheDatabase(ticker.getId(), ticker.getPic(), ticker.getTickerName(), ticker.getCompanyName(),
-                                ticker.getPrice(), ticker.getDeltaPrice(), ticker.getIsFavourite(), ticker.getCurrency());
+                        try {
+                            tickerDB2.become_fav(ticker.getTickerName());
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                         favourite.setBackgroundResource(R.drawable.yelow_star);
 
-                        StocksFragment.FavouriteRefresh();
-                        FavouriteFragment.FavouriteRefresh();
+                        StocksFragment.favouriteRefresh();
+                        FavouriteFragment.favouriteRefresh();
+                        new FavouriteFragment().webSocketRefresh();
 
                     }
                 }
@@ -126,22 +137,12 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
         }
     }
 
-
-    private void createTableOnFirstStart() {
-        tickerDB.insertEmpty();
-
-        SharedPreferences preferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("firstStart", false);
-        editor.apply();
-    }
-
     public static void readFavStatusData(Ticker ticker, ViewHolder viewHolder) {
-        Cursor cursor = tickerDB.read_all_data(ticker.getId());
-        SQLiteDatabase db = tickerDB.getReadableDatabase();
+        Cursor cursor = tickerDB2.read_row_data(ticker.getTickerName());
+        SQLiteDatabase db = tickerDB2.getReadableDatabase();
         try {
             while (cursor.moveToNext()) {
-                String item_fav_status = cursor.getString(cursor.getColumnIndex(tickerDB.COLUMN_FAVOURITE));
+                String item_fav_status = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_FAVOURITE));
                 ticker.setIsFavourite(item_fav_status);
 
 

@@ -8,21 +8,25 @@ public class Ticker {
     private String price;
     private String deltaPrice;
     private String isFavourite;
+    private String oldprice;
     private String currency;
 
-    public Ticker(){
+    public Ticker() {
     }
 
-    public Ticker(String id, String pic, String tickerName, String companyName, String price, String deltaPrice, String isFavourite, String currency) {
-        this.id=id;
+
+    public Ticker(String id, String pic, String tickerName, String companyName, String price, String deltaPrice, String isFavourite, String oldprice, String currency) {
+        this.id = id;
         this.pic = pic;
         this.tickerName = tickerName;
         this.companyName = companyName;
         this.price = price;
         this.deltaPrice = deltaPrice;
         this.isFavourite = isFavourite;
+        this.oldprice = oldprice;
         this.currency = currency;
     }
+
     public String getId() {
         return id;
     }
@@ -85,5 +89,13 @@ public class Ticker {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getOldprice() {
+        return oldprice;
+    }
+
+    public void setOldprice(String oldprice) {
+        this.oldprice = oldprice;
     }
 }

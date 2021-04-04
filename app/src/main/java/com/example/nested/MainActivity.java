@@ -3,6 +3,7 @@ package com.example.nested;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.fonts.Font;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         ViewPager2 viewpager2 = findViewById(R.id.viewpager);
         viewpager2.setAdapter(new TabAdapter(this));
 
-        TabLayout tableLayout = findViewById(R.id.tabLayout);
+        final TabLayout tableLayout = findViewById(R.id.tabLayout);
 
         final Typeface typeface = ResourcesCompat.getFont(MainActivity.this, R.font.montserratbold);
         final Typeface typeface2 = ResourcesCompat.getFont(MainActivity.this, R.font.montserratregular);
@@ -87,19 +90,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         tabLayoutMediator.attach();
+        tableLayout.getTabAt(1).select();
+        tableLayout.getTabAt(0).select();
+
 
         tableLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 ((TextView) tab.getCustomView()).setTextSize(28);
-                ((TextView) tab.getCustomView()).setTypeface(typeface,Typeface.BOLD);
+                ((TextView) tab.getCustomView()).setTypeface(typeface, Typeface.BOLD);
                 ((TextView) tab.getCustomView()).setTextColor(Color.parseColor("#1A1A1A"));
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 ((TextView) tab.getCustomView()).setTextSize(18);
-                ((TextView) tab.getCustomView()).setTypeface(typeface2,Typeface.NORMAL);
+                ((TextView) tab.getCustomView()).setTypeface(typeface2, Typeface.NORMAL);
                 ((TextView) tab.getCustomView()).setTextColor(Color.parseColor("#BABABA"));
             }
 
@@ -153,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 addToResent(recentArray, userInput.getText().toString());
                 refreshChip(popularArray, chipGroup);
                 StocksFragment.Search(userInput.getText().toString());
+                tableLayout.getTabAt(0).select();
                 chipGroupRecent.setVisibility(View.GONE);
                 chipGroup.setVisibility(View.GONE);
                 popular.setVisibility(View.GONE);
@@ -172,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 addToResent(recentArray, userInput.getText().toString());
                 refreshChip(recentArray, chipGroupRecent);
                 StocksFragment.Search(userInput.getText().toString());
+                tableLayout.getTabAt(0).select();
                 chipGroupRecent.setVisibility(View.GONE);
                 chipGroup.setVisibility(View.GONE);
                 popular.setVisibility(View.GONE);
@@ -196,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
                     recent.setVisibility(View.GONE);
                     blank.setVisibility(View.GONE);
                     onHideKeyoard();
+                    tableLayout.getTabAt(0).select();
+
                     return true;
                 }
                 return false;
@@ -258,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     public void createChip(ArrayList<String> array, ChipGroup chipGroup) {
@@ -268,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             chip.setPadding(10, 6, 0, 6);
             chip.setText(array.get(i));
             chip.setTextSize(12);
-             chipGroup.addView(chip);
+            chipGroup.addView(chip);
             if (chipGroup.getId() == R.id.chipgrpup) {
                 chip.setId(i);
             } else {
@@ -291,23 +302,6 @@ public class MainActivity extends AppCompatActivity {
         createChip(array, chipGroup);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (chipGroup.getVisibility() == View.GONE) {
-            super.onBackPressed();
-            return;
-        }
-        chipGroup.setVisibility(View.GONE);
-        popular.setVisibility(View.GONE);
-        chipGroupRecent.setVisibility(View.GONE);
-        recent.setVisibility(View.GONE);
-        blank.setVisibility(View.GONE);
-        userInput.getText().clear();
-        search.setVisibility(View.VISIBLE);
-        back.setVisibility(View.GONE);
-        close.setVisibility(View.GONE);
-        userInput.clearFocus();
-    }
 
     public void onHideKeyoard() {
         View view = this.getCurrentFocus();

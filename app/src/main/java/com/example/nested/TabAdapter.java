@@ -21,7 +21,6 @@ public class TabAdapter extends FragmentStateAdapter {
             default:
                 return new FavouriteFragment();
         }
-
     }
 
     @Override
