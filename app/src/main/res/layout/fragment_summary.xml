@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SummaryFragment">
+
+
+    <ImageView
+        android:id="@+id/sumCompanyPic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0.5"
+         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+       android:text="industry" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv1"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+        android:text="currency" />
+
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/tv3"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tv2"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="20dp"
+    android:textSize="16sp"
+    android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+    android:text="ipo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv3"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+
+        android:text="phone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv6"
+        app:layout_constraintStart_toEndOf="@+id/tv4"
+        app:layout_constraintTop_toBottomOf="@+id/tv3"
+
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+        android:autoLink="phone"
+        android:text="12345678" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv4"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+        android:text="site" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv7"
+        app:layout_constraintStart_toEndOf="@+id/tv5"
+        app:layout_constraintTop_toBottomOf="@+id/tv4"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:fontFamily="@font/montserrat"
+        android:autoLink="web"
+        android:text="www" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

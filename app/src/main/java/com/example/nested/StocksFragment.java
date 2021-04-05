@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -88,6 +90,19 @@ public class StocksFragment extends Fragment {
                 }
             }
         });
+
+/*recyclerView.addOnItemTouchListener( new RecyclerItemClickListener(getContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+
+            @Override public void onItemClick(View view, int position) {
+                Log.e("Sdsd","a"+position);
+            }
+
+            @Override public void onLongItemClick(View view, int position) {
+                Log.e("Sdsd","l"+position);
+            }
+        })
+);*/
+
 
         return fragmentView;
     }
@@ -186,6 +201,9 @@ public class StocksFragment extends Fragment {
                             page--;
                             refreshFlag=0;
                         }
+                        if(page==0){
+                            page=1;
+                        }
                         tmpArrayTicker.addAll(ParseQuery.extractTickers(page));
                     } catch (JSONException ed) {
                         ed.printStackTrace();
@@ -266,7 +284,11 @@ public class StocksFragment extends Fragment {
                 String isFavourite = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_FAVOURITE));
                 String oldprice = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_OLDPRICE));
                 String currency = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_CURRENCY));
-                Ticker Item = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, isFavourite, oldprice, currency);
+                String ipo = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_IPO));
+                String phone = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_PHONE));
+                String industry = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_INDUSTRY));
+                String site = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_SITE));
+                Ticker Item = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, isFavourite, oldprice, currency,ipo,phone,industry,site);
                 arrayTicker.add(Item);
             }
         } finally {
@@ -281,7 +303,8 @@ public class StocksFragment extends Fragment {
 
         for (Ticker item : arrayList) {
             tickerDB2.insertIntoTheDatabase(item.getId(), item.getPic(), item.getTickerName(), item.getCompanyName(),
-                    item.getPrice(), item.getDeltaPrice(), item.getIsFavourite(), item.getOldprice(), item.getCurrency());
+                    item.getPrice(), item.getDeltaPrice(), item.getIsFavourite(), item.getOldprice(), item.getCurrency(),
+                    item.getIpo(),item.getPhone(),item.getIndustry(),item.getSite());
         }
     }
 

@@ -59,6 +59,7 @@ public class FavouriteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         fragmentView = inflater.inflate(R.layout.recycler, container, false);
+
         refreshLayout = fragmentView.findViewById(R.id.swipeLayout);
         tickerDB2 = new TickerDB2(getActivity());
         recyclerView = fragmentView.findViewById(R.id.recyclerView);
@@ -102,7 +103,7 @@ public class FavouriteFragment extends Fragment {
                 String price = ParseQuery.chooseCurrency(currency) + " " + tmpprice2;
                 String deltaPrice = ParseQuery.deltaCount(oldPrice, tmpprice2, currency);
 
-                Ticker favouriteItem = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, null, oldPrice, currency);
+                Ticker favouriteItem = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, null, oldPrice, currency,"no_data","no_data","no_data","no_data");
                 arrayFavTicker.add(favouriteItem);
 
             }
@@ -127,29 +128,18 @@ public class FavouriteFragment extends Fragment {
 
         @Override
         public void onOpen(okhttp3.WebSocket webSocket, Response response) {
+
+            Log.e("sdsadasdsa"," a "+ response);
             for (Ticker ticker : arrayFavTicker) {
                 webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"" + ticker.getTickerName() + "\"}");
 
-                /////////////////////////////////////////////////////////////
-               /* String a = ticker.getTickerName();
-                if (a.equals("BA")) {
-                    a = "BINANCE:BTCUSDT";
-                }
-                if (a.equals("AAPL")) {
-                    a = "BINANCE:ETHUSDT";
-                }
-
-                webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"" + a + "\"}");*/
-                //////////////////////////////////////////////////////////////
             }
-
-          /*  webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"BINANCE:BTCUSDT\"}");
-            webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"BINANCE:ETHUSDT\"}");*/
 
         }
 
         @Override
         public void onMessage(okhttp3.WebSocket webSocket, String text) {
+            Log.e("sdsadasdsa"," a "+ text);
             try {
                 extractPriceData(text);
             } catch (JSONException | SQLException e) {
@@ -196,17 +186,8 @@ public class FavouriteFragment extends Fragment {
         if (!price.equals(null)) {
             tickerDB2.update_price(tickerName, price);
         }
-/////////////////////////////////////////////////////////////////////////
-           /* if (tickerName.equals("BINANCE:BTCUSDT")) {
-                tickerName = "BA";
-            }
-            if (tickerName.equals("BINANCE:ETHUSDT")) {
-                tickerName = "AAPL";
-            }
-            tickerDB2.update_price(tickerName, price);
-        }*/
+
     }
-//////////////////////////////////////////////////////////////////////////
 
 
     @Override

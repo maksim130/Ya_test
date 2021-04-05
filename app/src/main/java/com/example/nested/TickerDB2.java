@@ -23,12 +23,18 @@ public class TickerDB2 extends SQLiteOpenHelper {
     public static String COLUMN_DELTAPRICE = "deltaprice";
     public static String COLUMN_OLDPRICE = "oldprice";
     public static String COLUMN_CURRENCY = "utility";
+    public static String COLUMN_IPO = "ipo";
+    public static String COLUMN_PHONE = "phone";
+    public static String COLUMN_INDUSTRY = "industry";
+    public static String COLUMN_SITE = "site";
+
 
     private static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + ID + " TEXT," + COLUMN_PIC + " TEXT,"
             + COLUMN_TICKERNAME  + " TEXT UNIQUE PRIMARY KEY, " + COLUMN_COMPANYNAME + " TEXT," + COLUMN_PRICE + " TEXT,"
             + COLUMN_DELTAPRICE + " TEXT, " + COLUMN_FAVOURITE + " TEXT DEFAULT 0," + COLUMN_OLDPRICE + " TEXT, " +
-            COLUMN_CURRENCY + " TEXT)";
+             COLUMN_CURRENCY + " TEXT, " + COLUMN_IPO + " TEXT, " + COLUMN_PHONE  + " TEXT, " + COLUMN_INDUSTRY + " TEXT, "
+            + COLUMN_SITE + " TEXT)";
 
 
     public TickerDB2(Context context) {
@@ -47,7 +53,8 @@ public class TickerDB2 extends SQLiteOpenHelper {
     public void insertEmpty() {
     }
 
-    public void insertIntoTheDatabase(String id, String pic, String tickerName, String companyName, String price, String deltaPrice, String favourite,String oldprice, String currency) {
+    public void insertIntoTheDatabase(String id, String pic, String tickerName, String companyName, String price, String deltaPrice,
+                                      String favourite,String oldprice, String currency, String ipo ,String phone,String industry,String site) {
         SQLiteDatabase db;
         db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -60,6 +67,10 @@ public class TickerDB2 extends SQLiteOpenHelper {
         cv.put(TickerDB2.COLUMN_FAVOURITE, favourite);
         cv.put(TickerDB2.COLUMN_OLDPRICE, oldprice);
         cv.put(TickerDB2.COLUMN_CURRENCY, currency);
+        cv.put(TickerDB2.COLUMN_IPO, ipo);
+        cv.put(TickerDB2.COLUMN_PHONE, phone);
+        cv.put(TickerDB2.COLUMN_INDUSTRY, industry);
+        cv.put(TickerDB2.COLUMN_SITE, site);
         db.replace(TickerDB2.TABLE_NAME, null, cv);
         //  Log.d("TickerDB2 Status", id+" " + tickerName + ", favstatus - "+favourite+" - . " + cv);
     }

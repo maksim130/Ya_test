@@ -1,6 +1,7 @@
 package com.example.nested;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -39,8 +40,16 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
 
         tickerDB2 = new TickerDB2(context);
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticker_item, parent, false);
+ViewHolder holder = new ViewHolder(view);
+      view.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
 
-        return new ViewHolder(view);
+          }
+      });
+
+
+        return holder;
     }
 
     @Override
@@ -82,7 +91,7 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder  {
 
         ImageView companyPic;
         TextView tickerName;
@@ -91,10 +100,10 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
         TextView price;
         TextView deltaPrice;
         CardView cardView;
-
+ConstraintLayout constraintLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
+constraintLayout= itemView.findViewById(R.id.constraint);
             cardView = itemView.findViewById(R.id.card_view_item);
             companyPic = itemView.findViewById(R.id.companyPic);
             tickerName = itemView.findViewById(R.id.tickerName);
@@ -102,6 +111,22 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
             price = itemView.findViewById(R.id.price);
             deltaPrice = itemView.findViewById(R.id.deltaPrice);
             favourite = itemView.findViewById(R.id.favorite);
+
+
+            constraintLayout.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                  //  Log.e("Sdsd","adapter"+position);
+                    Ticker ticker = arrayTicker.get(position);
+
+                    String tickerName = ticker.getTickerName();
+                   // Log.e("Sdsd","adapter "+tickerName);
+                    Intent intent = new Intent(context, DetailActivit.class);
+                    intent.putExtra("id",tickerName);
+                    context.startActivity(intent);
+                }
+            });
 
             favourite.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,6 +160,7 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
             });
 
         }
+
     }
 
     public static void readFavStatusData(Ticker ticker, ViewHolder viewHolder) {
