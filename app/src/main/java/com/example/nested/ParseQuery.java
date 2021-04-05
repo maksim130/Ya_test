@@ -324,7 +324,7 @@ public class ParseQuery {
 
     public static ArrayList<News> extractNews(String tickername) throws IOException, JSONException {
 
-ArrayList<News> newsArray = new ArrayList<>();
+        ArrayList<News> newsArray = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = Calendar.getInstance().getTime();
         String to = String.valueOf(formatter.format(date));
@@ -337,7 +337,6 @@ ArrayList<News> newsArray = new ArrayList<>();
 
         jsonResponse = null;
         jsonResponse = makeHttpRequest(createUrl("https://finnhub.io/api/v1/company-news?symbol=" + tickername + "&from=" + from + "&to=" + to + "&token=c114p3f48v6t4vgvtshg"));
-
 
 
         try {
@@ -353,10 +352,9 @@ ArrayList<News> newsArray = new ArrayList<>();
                 String datetime = jsonobject.optString("datetime");
 
                 long newstime = Long.parseLong(datetime);
-                Date newsdate = new Date(newstime*1000);
+                Date newsdate = new Date(newstime * 1000);
                 String dataofnews = formatter.format(newsdate);
 
-                Log.e("ssd", "a+ "+dataofnews);
 
                 String headline = jsonobject.optString("headline");
                 String id = jsonobject.optString("id");
@@ -379,7 +377,7 @@ ArrayList<News> newsArray = new ArrayList<>();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e("kjjkjkj","extract "+newsArray.size());
+
         return newsArray;
     }
 

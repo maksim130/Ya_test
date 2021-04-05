@@ -49,7 +49,6 @@ public class FavouriteFragment extends Fragment {
     okhttp3.WebSocket ws;
 
 
-
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     String price;
     String tickerName;
@@ -103,7 +102,7 @@ public class FavouriteFragment extends Fragment {
                 String price = ParseQuery.chooseCurrency(currency) + " " + tmpprice2;
                 String deltaPrice = ParseQuery.deltaCount(oldPrice, tmpprice2, currency);
 
-                Ticker favouriteItem = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, null, oldPrice, currency,"no_data","no_data","no_data","no_data");
+                Ticker favouriteItem = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, null, oldPrice, currency, "no_data", "no_data", "no_data", "no_data");
                 arrayFavTicker.add(favouriteItem);
 
             }
@@ -129,7 +128,6 @@ public class FavouriteFragment extends Fragment {
         @Override
         public void onOpen(okhttp3.WebSocket webSocket, Response response) {
 
-            Log.e("sdsadasdsa"," a "+ response);
             for (Ticker ticker : arrayFavTicker) {
                 webSocket.send("{\"type\":\"subscribe\",\"symbol\":\"" + ticker.getTickerName() + "\"}");
 
@@ -139,7 +137,6 @@ public class FavouriteFragment extends Fragment {
 
         @Override
         public void onMessage(okhttp3.WebSocket webSocket, String text) {
-            Log.e("sdsadasdsa"," a "+ text);
             try {
                 extractPriceData(text);
             } catch (JSONException | SQLException e) {

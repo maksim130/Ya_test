@@ -1,6 +1,7 @@
 package com.example.nested;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -41,7 +43,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
     @Override
     public void onBindViewHolder(@NonNull FavouriteAdapter.ViewHolder holder, int position) {
 
-        if(position%2==0) {
+        if (position % 2 == 0) {
             holder.cardView.setCardBackgroundColor(Color.parseColor("#F0F4F7"));
         }
         holder.tickerName.setText(arrayFavTicker.get(position).getTickerName());
@@ -49,7 +51,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
         holder.price.setText(arrayFavTicker.get(position).getPrice());
         holder.deltaPrice.setText(arrayFavTicker.get(position).getDeltaPrice());
 
-        if (arrayFavTicker.get(position).getDeltaPrice()!=null&&arrayFavTicker.get(position).getDeltaPrice().startsWith("+")) {
+        if (arrayFavTicker.get(position).getDeltaPrice() != null && arrayFavTicker.get(position).getDeltaPrice().startsWith("+")) {
             holder.deltaPrice.setTextColor(Color.parseColor("#008500"));
         } else {
             holder.deltaPrice.setTextColor(Color.parseColor("#FF0000"));
@@ -76,10 +78,12 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
         TextView price;
         TextView deltaPrice;
         CardView cardView;
+        ConstraintLayout constraintLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            constraintLayout = itemView.findViewById(R.id.constraintFav);
             cardView = itemView.findViewById(R.id.card_view_item2);
             companyPic = itemView.findViewById(R.id.companyPic);
             tickerName = itemView.findViewById(R.id.tickerName);
@@ -101,6 +105,19 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
                     new FavouriteFragment().webSocketRefresh();
                 }
             });
+            constraintLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    Ticker ticker = arrayFavTicker.get(position);
+                    String tickerName = ticker.getTickerName();
+                    Intent intent = new Intent(context, DetailActivit.class);
+                    intent.putExtra("id", tickerName);
+                    context.startActivity(intent);
+                }
+            });
+
+
         }
     }
 }

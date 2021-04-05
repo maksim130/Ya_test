@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/news_card_view_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -75,7 +76,7 @@
                     android:fontFamily="@font/montserrat_bold"
                     android:maxLines="3"
                     android:minLines="2"
-                    android:text="TextView"
+                    tools:text="TextView"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="@id/newsbox"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -85,14 +86,11 @@
                     android:id="@+id/newsdate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:layout_marginEnd="6dp"
-
                     android:fontFamily="@font/montserrat"
-                    android:text="TextView"
+                    tools:text="TextView"
                     android:textSize="10sp"
                     app:layout_constraintBottom_toBottomOf="@id/newsbox"
-
                     app:layout_constraintStart_toStartOf="@id/newsbox" />
 
 
@@ -101,9 +99,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
-
                     android:fontFamily="@font/montserrat"
-                    android:text="TextView"
+                    tools:text="TextView"
                     android:textSize="10sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

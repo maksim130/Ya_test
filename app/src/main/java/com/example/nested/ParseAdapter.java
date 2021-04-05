@@ -28,6 +28,7 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
     private ArrayList<Ticker> arrayTicker;
     private Context context;
     private static TickerDB2 tickerDB2;
+
     public ParseAdapter(ArrayList<Ticker> arrayTicker, Context context) {
         this.arrayTicker = arrayTicker;
         this.context = context;
@@ -40,13 +41,13 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
 
         tickerDB2 = new TickerDB2(context);
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticker_item, parent, false);
-ViewHolder holder = new ViewHolder(view);
-      view.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
+        ViewHolder holder = new ViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-          }
-      });
+            }
+        });
 
 
         return holder;
@@ -65,12 +66,12 @@ ViewHolder holder = new ViewHolder(view);
         holder.price.setText(parseItem.getPrice());
         holder.deltaPrice.setText(parseItem.getDeltaPrice());
 
-        if(position%2==0) {
+        if (position % 2 == 0) {
             holder.cardView.setCardBackgroundColor(Color.parseColor("#F0F4F7"));
         }
 
 
-        if (parseItem.getDeltaPrice()!=null && parseItem.getDeltaPrice().startsWith("+")) {
+        if (parseItem.getDeltaPrice() != null && parseItem.getDeltaPrice().startsWith("+")) {
             holder.deltaPrice.setTextColor(Color.parseColor("#008500"));
         } else {
             holder.deltaPrice.setTextColor(Color.parseColor("#FF0000"));
@@ -91,7 +92,7 @@ ViewHolder holder = new ViewHolder(view);
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder  {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView companyPic;
         TextView tickerName;
@@ -100,10 +101,11 @@ ViewHolder holder = new ViewHolder(view);
         TextView price;
         TextView deltaPrice;
         CardView cardView;
-ConstraintLayout constraintLayout;
+        ConstraintLayout constraintLayout;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-constraintLayout= itemView.findViewById(R.id.constraint);
+            constraintLayout = itemView.findViewById(R.id.constraint);
             cardView = itemView.findViewById(R.id.card_view_item);
             companyPic = itemView.findViewById(R.id.companyPic);
             tickerName = itemView.findViewById(R.id.tickerName);
@@ -113,17 +115,14 @@ constraintLayout= itemView.findViewById(R.id.constraint);
             favourite = itemView.findViewById(R.id.favorite);
 
 
-            constraintLayout.setOnClickListener(new View.OnClickListener(){
+            constraintLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                  //  Log.e("Sdsd","adapter"+position);
                     Ticker ticker = arrayTicker.get(position);
-
                     String tickerName = ticker.getTickerName();
-                   // Log.e("Sdsd","adapter "+tickerName);
                     Intent intent = new Intent(context, DetailActivit.class);
-                    intent.putExtra("id",tickerName);
+                    intent.putExtra("id", tickerName);
                     context.startActivity(intent);
                 }
             });

@@ -42,10 +42,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull NewsAdapter.ViewHolder holder, int position) {
 
-        Log.e("kjjkjkj","newsadapter "+newsArray.get(position).getHeadline());
-        Log.e("kjjkjkj","newsadapter "+newsArray.get(position).getDate());
-        Log.e("kjjkjkj","newsadapter "+newsArray.get(position).getSource());
-
         holder.newsheader.setText(newsArray.get(position).getHeadline());
         holder.newsdate.setText(newsArray.get(position).getDate());
         holder.newssource.setText(newsArray.get(position).getSource());
@@ -60,11 +56,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         } else {
             Picasso.get().load(newsArray.get(position).getImage()).error(R.drawable.no_logo).into(holder.newsPic);
         }
-
-
-
-
-
     }
 
     @Override

@@ -22,6 +22,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.squareup.picasso.Picasso;
 
+import java.sql.SQLException;
+
 public class DetailActivit extends AppCompatActivity {
 
     public static String TickerfromMA;
@@ -43,12 +45,9 @@ public class DetailActivit extends AppCompatActivity {
         Bundle arguments = getIntent().getExtras();
         try {
             TickerfromMA = arguments.get("id").toString();
-            //  Log.e("Sdsd","detail"+IdfromCA);
 
         } catch (NullPointerException e) {
         }
-
-
 
 
         tickername = findViewById(R.id.header_tickername);
@@ -71,7 +70,6 @@ public class DetailActivit extends AppCompatActivity {
 
         viewpager2 = findViewById(R.id.viewpager22);
         viewpager2.setAdapter(new TabAdapterDetail(this));
-
         tableLayout = findViewById(R.id.tabLayout22);
 
 
@@ -83,12 +81,10 @@ public class DetailActivit extends AppCompatActivity {
                     case 0:
                         tabOne.setText("Summary");
                         tab.setCustomView(tabOne);
-                        //new SummaryFragment();
                         break;
                     case 1:
                         tabTwo.setText("News");
                         tab.setCustomView(tabTwo);
-                       // new NewsFragment();
                         break;
                 }
             }
@@ -118,7 +114,7 @@ public class DetailActivit extends AppCompatActivity {
 
 
         tickerDB2 = new TickerDB2(getApplicationContext());
-        Log.e("Sdsd", "D" + TickerfromMA);
+
         Cursor cursor = tickerDB2.read_row_data(TickerfromMA);
         SQLiteDatabase db = tickerDB2.getReadableDatabase();
         try {
@@ -136,7 +132,7 @@ public class DetailActivit extends AppCompatActivity {
                 String phone = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_PHONE));
                 String industry = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_INDUSTRY));
                 String site = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_SITE));
-                ticker = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, isFavourite, oldprice, currency,ipo,phone,industry,site);
+                ticker = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, isFavourite, oldprice, currency, ipo, phone, industry, site);
 
 
             }
@@ -153,21 +149,47 @@ public class DetailActivit extends AppCompatActivity {
         }
 
 
-
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        Log.e("Sdsd ", ticker.getCompanyName() + " " + ticker.getTickerName());
 
 
+        favourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
+                if (ticker.getIsFavourite().equals("1")) {
+                    ticker.setIsFavourite("0");
+                    tickerDB2.remove_fav(ticker.getTickerName());
+                    favourite.setBackgroundResource(R.drawable.empty_star);
 
+                    StocksFragment.favouriteRefresh();
+                    FavouriteFragment.favouriteRefresh();
+                    new FavouriteFragment().webSocketRefresh();
 
+                } else {
+                    ticker.setIsFavourite("1");
+                    try {
+                        tickerDB2.become_fav(ticker.getTickerName());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    favourite.setBackgroundResource(R.drawable.yelow_star);
+
+                    StocksFragment.favouriteRefresh();
+                    FavouriteFragment.favouriteRefresh();
+                    new FavouriteFragment().webSocketRefresh();
+
+                }
+            }
+        });
+
+    }
     }
 
 
-}
+

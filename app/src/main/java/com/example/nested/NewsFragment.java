@@ -25,10 +25,10 @@ import java.util.concurrent.ExecutionException;
 public class NewsFragment extends Fragment {
 
     static ArrayList<News> newsArray = new ArrayList<>();
-  static   NewsAdapter newsAdapter;
+    static NewsAdapter newsAdapter;
     RecyclerView recyclerView;
     View fragmentView;
-   static ProgressBar progressBar;
+    static ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,7 +39,7 @@ public class NewsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         newsAdapter = new NewsAdapter(newsArray, getActivity());
         recyclerView.setAdapter(newsAdapter);
-progressBar = fragmentView.findViewById(R.id.progree_bar);
+        progressBar = fragmentView.findViewById(R.id.progree_bar);
 
         try {
             getNews();
@@ -84,7 +84,7 @@ progressBar = fragmentView.findViewById(R.id.progree_bar);
     }
 
     private void getNews() throws ExecutionException, InterruptedException {
-newsArray.clear();
+        newsArray.clear();
         CheckInternet checkInternet = new CheckInternet();
         checkInternet.execute().get();
         if (checkInternet.isOnline) {

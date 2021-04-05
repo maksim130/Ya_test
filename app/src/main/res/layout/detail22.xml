@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:fontFamily="@font/montserrat_bold"
-        android:text="ticker bar"
+        tools:text="ticker bar"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="@id/backDetail"
@@ -28,11 +28,11 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:fontFamily="@font/montserrat"
-        android:text="company bar"
+        tools:text="company bar"
         app:layout_constraintTop_toBottomOf="@id/header_tickername"
         app:layout_constraintStart_toStartOf="@id/backDetail"
         android:textColor="#1A1A1A"
-        android:textSize="18sp" />
+        android:textSize="12sp" />
 
     <ImageButton
         android:id="@+id/backDetail"
@@ -79,15 +79,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout22" />
 
-    <TextView
 
-        android:id="@android:id/text1"
-        android:layout_width="match_parent"
-        android:textSize="15sp"
-        android:textColor="@color/colorPrimaryDark"
-        android:gravity="center"
-        android:layout_height="match_parent"
-        />
 
 
 

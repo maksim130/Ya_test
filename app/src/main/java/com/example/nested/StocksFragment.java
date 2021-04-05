@@ -91,18 +91,6 @@ public class StocksFragment extends Fragment {
             }
         });
 
-/*recyclerView.addOnItemTouchListener( new RecyclerItemClickListener(getContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-
-            @Override public void onItemClick(View view, int position) {
-                Log.e("Sdsd","a"+position);
-            }
-
-            @Override public void onLongItemClick(View view, int position) {
-                Log.e("Sdsd","l"+position);
-            }
-        })
-);*/
-
 
         return fragmentView;
     }
