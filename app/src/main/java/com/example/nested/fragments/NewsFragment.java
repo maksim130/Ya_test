@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.fragments;
 
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -9,11 +9,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
+import com.example.nested.network.CheckInternet;
+import com.example.nested.activity.DetailActivity;
+import com.example.nested.entity.News;
+import com.example.nested.adapters.NewsAdapter;
+import com.example.nested.network.ParseQuery;
+import com.example.nested.R;
 
 import org.json.JSONException;
 
@@ -59,7 +65,7 @@ public class NewsFragment extends Fragment {
 
 
             try {
-                newsArray.addAll(ParseQuery.extractNews(DetailActivit.TickerfromMA));
+                newsArray.addAll(ParseQuery.extractNews(DetailActivity.TickerfromMA));
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();

@@ -1,10 +1,13 @@
-package com.example.nested;
+package com.example.nested.adapters;
 
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.nested.fragments.FavouriteFragment;
+import com.example.nested.fragments.StocksFragment;
 
 public class TabAdapter extends FragmentStateAdapter {
 

@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity android:name=".activity.MainActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             >
@@ -22,11 +22,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivit"
-            android:parentActivityName=".MainActivity" >
+            android:name=".activity.DetailActivity"
+            android:parentActivityName=".activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
         <meta-data
             android:name="preloaded_fonts"

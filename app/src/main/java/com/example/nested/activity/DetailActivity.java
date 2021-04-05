@@ -1,16 +1,13 @@
-package com.example.nested;
+package com.example.nested.activity;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,13 +15,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.nested.R;
+import com.example.nested.adapters.TabAdapterDetail;
+import com.example.nested.db.TickerDB2;
+import com.example.nested.entity.Ticker;
+import com.example.nested.fragments.FavouriteFragment;
+import com.example.nested.fragments.StocksFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.squareup.picasso.Picasso;
 
 import java.sql.SQLException;
 
-public class DetailActivit extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity {
 
     public static String TickerfromMA;
     private TickerDB2 tickerDB2;
@@ -55,8 +57,8 @@ public class DetailActivit extends AppCompatActivity {
         back = findViewById(R.id.backDetail);
         favourite = findViewById(R.id.favoriteDetail);
 
-        typefaceBold = ResourcesCompat.getFont(DetailActivit.this, R.font.montserratbold);
-        typefaceRegular = ResourcesCompat.getFont(DetailActivit.this, R.font.montserratregular);
+        typefaceBold = ResourcesCompat.getFont(DetailActivity.this, R.font.montserratbold);
+        typefaceRegular = ResourcesCompat.getFont(DetailActivity.this, R.font.montserratregular);
 
 
         final TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.tab_detail1, null);

@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,12 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.nested.activity.DetailActivity;
+import com.example.nested.R;
+import com.example.nested.db.TickerDB2;
+import com.example.nested.entity.Ticker;
+import com.example.nested.fragments.FavouriteFragment;
+import com.example.nested.fragments.StocksFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -111,7 +117,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
                     int position = getAdapterPosition();
                     Ticker ticker = arrayFavTicker.get(position);
                     String tickerName = ticker.getTickerName();
-                    Intent intent = new Intent(context, DetailActivit.class);
+                    Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra("id", tickerName);
                     context.startActivity(intent);
                 }

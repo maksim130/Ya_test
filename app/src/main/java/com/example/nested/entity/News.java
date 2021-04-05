@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.entity;
 
 public class News {
 

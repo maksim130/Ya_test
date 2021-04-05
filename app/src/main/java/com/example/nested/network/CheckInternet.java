@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.network;
 
 import android.os.AsyncTask;
 
@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 public class CheckInternet extends AsyncTask<Void, Void, Void> {
-    boolean  isOnline = true;
+  public   boolean  isOnline = true;
 
     @Override
     protected Void doInBackground(Void... voids) {

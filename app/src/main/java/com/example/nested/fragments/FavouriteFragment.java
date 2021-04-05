@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,26 +7,27 @@ import android.os.Bundle;
 
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+
+import com.example.nested.adapters.FavouriteAdapter;
+import com.example.nested.network.ParseQuery;
+import com.example.nested.R;
+import com.example.nested.entity.Ticker;
+import com.example.nested.db.TickerDB2;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -34,7 +35,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocketListener;
 
-// т.к. торгов на выходных нет, обновления не приходят через webSocket. Полностью проверить функционал websocket не удалось. возможна некорректная работа
+//websocket реализован только для тикеров в "избраном"
 
 public class FavouriteFragment extends Fragment {
 

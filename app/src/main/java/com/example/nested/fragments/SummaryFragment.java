@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.fragments;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -6,13 +6,16 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.nested.activity.DetailActivity;
+import com.example.nested.R;
+import com.example.nested.entity.Ticker;
+import com.example.nested.db.TickerDB2;
 import com.squareup.picasso.Picasso;
 
 
@@ -42,7 +45,7 @@ public class SummaryFragment extends Fragment {
 
         tickerDB2 = new TickerDB2(getContext());
 
-        Cursor cursor = tickerDB2.read_row_data(DetailActivit.TickerfromMA);
+        Cursor cursor = tickerDB2.read_row_data(DetailActivity.TickerfromMA);
         SQLiteDatabase db = tickerDB2.getReadableDatabase();
         try {
             while (cursor.moveToNext()) {

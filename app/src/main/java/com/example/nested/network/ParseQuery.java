@@ -1,10 +1,10 @@
-package com.example.nested;
+package com.example.nested.network;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.example.nested.entity.News;
+import com.example.nested.entity.Ticker;
 
 import org.json.JSONArray;
 import org.json.JSONException;

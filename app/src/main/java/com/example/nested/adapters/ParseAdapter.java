@@ -1,11 +1,10 @@
-package com.example.nested;
+package com.example.nested.adapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,12 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.nested.activity.DetailActivity;
+import com.example.nested.R;
+import com.example.nested.db.TickerDB2;
+import com.example.nested.entity.Ticker;
+import com.example.nested.fragments.FavouriteFragment;
+import com.example.nested.fragments.StocksFragment;
 import com.squareup.picasso.Picasso;
 
 import java.sql.SQLException;
@@ -121,7 +126,7 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
                     int position = getAdapterPosition();
                     Ticker ticker = arrayTicker.get(position);
                     String tickerName = ticker.getTickerName();
-                    Intent intent = new Intent(context, DetailActivit.class);
+                    Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra("id", tickerName);
                     context.startActivity(intent);
                 }

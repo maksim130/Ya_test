@@ -1,10 +1,9 @@
-package com.example.nested;
+package com.example.nested.adapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.nested.R;
+import com.example.nested.entity.News;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

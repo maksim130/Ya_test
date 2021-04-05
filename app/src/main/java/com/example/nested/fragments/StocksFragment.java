@@ -1,4 +1,4 @@
-package com.example.nested;
+package com.example.nested.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -17,12 +16,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.nested.network.CheckInternet;
+import com.example.nested.adapters.ParseAdapter;
+import com.example.nested.network.ParseQuery;
+import com.example.nested.R;
+import com.example.nested.entity.Ticker;
+import com.example.nested.db.TickerDB2;
 
 import org.json.JSONException;
 
@@ -45,7 +48,7 @@ public class StocksFragment extends Fragment {
     public static int searchFlag = 0;
     public static int refreshFlag = 0;
     static LinearLayoutManager layoutManager;
-    static   boolean backSearchFlag=false;
+    static public  boolean backSearchFlag=false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
