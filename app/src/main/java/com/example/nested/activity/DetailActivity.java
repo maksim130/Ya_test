@@ -177,6 +177,7 @@ public class DetailActivity extends AppCompatActivity {
                     ticker.setIsFavourite("1");
                     try {
                         tickerDB2.become_fav(ticker.getTickerName());
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

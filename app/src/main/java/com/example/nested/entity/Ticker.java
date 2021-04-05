@@ -15,7 +15,8 @@ public class Ticker {
     private String industry;
     private String site;
 
-    public Ticker() {
+    public Ticker(String tickerName) {
+        this.tickerName = tickerName;
     }
 
 

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.example.nested.db.TickerDB2;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -40,6 +42,7 @@ public class StocksFragment extends Fragment {
     private static ParseAdapter recyclerAdapter;
     private static ArrayList<Ticker> arrayTicker = new ArrayList<>();
     private static ArrayList<Ticker> tmpArrayTicker = new ArrayList<>();
+    private static ArrayList<Ticker> favtickerarray = new ArrayList<>();
     View fragmentView;
     private static SwipeRefreshLayout refreshLayout;
     NestedScrollView nestedScrollView;
@@ -48,8 +51,8 @@ public class StocksFragment extends Fragment {
     public static int searchFlag = 0;
     public static int refreshFlag = 0;
     static LinearLayoutManager layoutManager;
-    static public  boolean backSearchFlag=false;
-    static public  boolean onrefresflag= false;
+    static public boolean backSearchFlag = false;
+    static public boolean onrefresflag = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +67,11 @@ public class StocksFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        isFirstStart();
+        try {
+            isFirstStart();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -74,7 +81,7 @@ public class StocksFragment extends Fragment {
                 try {
                     stockUpdate();
                     loadStockFromDB();
-                } catch (IOException | ExecutionException | InterruptedException e) {
+                } catch (IOException | ExecutionException | InterruptedException | SQLException e) {
                     e.printStackTrace();
                 }
             }
@@ -100,8 +107,7 @@ public class StocksFragment extends Fragment {
     }
 
 
-
-    public  void isFirstStart() {
+    public void isFirstStart() throws SQLException {
         SharedPreferences prefs = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         final Integer pages = prefs.getInt("firstStart", 0);
         if (pages == 0) {
@@ -126,12 +132,13 @@ public class StocksFragment extends Fragment {
         BackgroundTask backgroundTask = new BackgroundTask();
         backgroundTask.execute("search", userInput);
         searchFlag = 1;
-        backSearchFlag=true;
+        backSearchFlag = true;
     }
 
 
     private void stockUpdate() throws IOException, ExecutionException, InterruptedException {
-        backSearchFlag=false;
+        backSearchFlag = false;
+
         CheckInternet checkInternet = new CheckInternet();
         checkInternet.execute().get();
         if (checkInternet.isOnline) {
@@ -172,7 +179,7 @@ public class StocksFragment extends Fragment {
         refreshLayout.setRefreshing(false);
     }
 
-    public static void stockRefresh() {
+    public static void stockRefresh() throws SQLException {
         loadStockFromDB();
         recyclerAdapter.notifyDataSetChanged();
         refreshLayout.setRefreshing(false);
@@ -191,10 +198,10 @@ public class StocksFragment extends Fragment {
                         page++;
                         if (refreshFlag == 1) {
                             page--;
-                            refreshFlag=0;
+                            refreshFlag = 0;
                         }
-                        if(page==0){
-                            page=1;
+                        if (page == 0) {
+                            page = 1;
                         }
                         tmpArrayTicker.addAll(ParseQuery.extractTickers(page));
                     } catch (JSONException ed) {
@@ -223,7 +230,7 @@ public class StocksFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
+            getFav();
             recyclerAdapter.notifyDataSetChanged();
             refreshLayout.setRefreshing(true);
         }
@@ -232,18 +239,24 @@ public class StocksFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-
             if (searchFlag == 1) {
                 saveStockToDB(arrayTicker);
                 searchFlag = 0;
-            }
-            else {
+            } else {
                 arrayTicker.clear();
                 saveStockToDB(tmpArrayTicker);
-                loadStockFromDB();
+                try {
+                    loadStockFromDB();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
 
             }
-
+            try {
+                setFav();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             recyclerAdapter.notifyDataSetChanged();
             refreshLayout.setRefreshing(false);
 
@@ -256,8 +269,8 @@ public class StocksFragment extends Fragment {
     }
 
 
-    public static void loadStockFromDB() {
-        backSearchFlag=false;
+    public static void loadStockFromDB() throws SQLException {
+        backSearchFlag = false;
         if (arrayTicker != null) {
             arrayTicker.clear();
         }
@@ -267,7 +280,7 @@ public class StocksFragment extends Fragment {
         try {
             cursor.moveToFirst();
             while (cursor.moveToNext()) {
-                  String id = cursor.getString(cursor.getColumnIndex(TickerDB2.ID));
+                String id = cursor.getString(cursor.getColumnIndex(TickerDB2.ID));
                 String pic = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_PIC));
                 String tickerName = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_TICKERNAME));
                 String companyName = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_COMPANYNAME));
@@ -280,24 +293,25 @@ public class StocksFragment extends Fragment {
                 String phone = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_PHONE));
                 String industry = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_INDUSTRY));
                 String site = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_SITE));
-                Ticker Item = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, isFavourite, oldprice, currency,ipo,phone,industry,site);
+                Ticker Item = new Ticker(id, pic, tickerName, companyName, price, deltaPrice, isFavourite, oldprice, currency, ipo, phone, industry, site);
                 arrayTicker.add(Item);
             }
         } finally {
 
-            if (cursor != null && cursor.isClosed())
+               if (cursor != null && cursor.isClosed())
                 cursor.close();
             db.close();
         }
     }
 
-    public static void saveStockToDB(ArrayList<Ticker>arrayList) {
+    public static void saveStockToDB(ArrayList<Ticker> arrayList) {
 
         for (Ticker item : arrayList) {
             tickerDB2.insertIntoTheDatabase(item.getId(), item.getPic(), item.getTickerName(), item.getCompanyName(),
                     item.getPrice(), item.getDeltaPrice(), item.getIsFavourite(), item.getOldprice(), item.getCurrency(),
-                    item.getIpo(),item.getPhone(),item.getIndustry(),item.getSite());
+                    item.getIpo(), item.getPhone(), item.getIndustry(), item.getSite());
         }
+
     }
 
 
@@ -308,6 +322,32 @@ public class StocksFragment extends Fragment {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("firstStart", 1);
         editor.apply();
+    }
+
+    public static void getFav() {
+        favtickerarray.clear();
+        SQLiteDatabase db = tickerDB2.getReadableDatabase();
+        Cursor cursor = tickerDB2.select_all_favorite_list();
+        try {
+            while (cursor.moveToNext()) {
+                String tickerName = cursor.getString(cursor.getColumnIndex(TickerDB2.COLUMN_TICKERNAME));
+                Ticker favtickers = new Ticker(tickerName);
+                favtickerarray.add(favtickers);
+            }
+        } finally {
+         //   Log.e("sdsd","getfav "+ favtickerarray.size());
+            if (cursor != null && cursor.isClosed())
+                cursor.close();
+            db.close();
+        }
+    }
+
+    private static void setFav() throws SQLException {
+      //  Log.e("sdsd","setfav "+favtickerarray.size());
+        for (Ticker item : favtickerarray) {
+            tickerDB2.become_fav(item.getTickerName());
+
+        }
     }
 
 

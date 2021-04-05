@@ -34,6 +34,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -340,8 +341,16 @@ public class MainActivity extends AppCompatActivity {
             inputText.setHint(R.string.hint_string);
 
         } else if (StocksFragment.backSearchFlag) {
-            StocksFragment.loadStockFromDB();
-            StocksFragment.stockRefresh();
+            try {
+                StocksFragment.loadStockFromDB();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                StocksFragment.stockRefresh();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         } else {
             super.onBackPressed();
         }

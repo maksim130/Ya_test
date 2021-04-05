@@ -159,6 +159,7 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
                         ticker.setIsFavourite("1");
                         try {
                             tickerDB2.become_fav(ticker.getTickerName());
+
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
