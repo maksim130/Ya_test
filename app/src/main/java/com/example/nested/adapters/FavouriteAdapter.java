@@ -55,6 +55,18 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
         holder.tickerName.setText(arrayFavTicker.get(position).getTickerName());
         holder.companyName.setText(arrayFavTicker.get(position).getCompanyName());
         holder.price.setText(arrayFavTicker.get(position).getPrice());
+
+        int index = arrayFavTicker.get(position).getPrice().indexOf('.');
+        if (arrayFavTicker.get(position).getPrice().length()>index+3){
+            String newprice = arrayFavTicker.get(position).getPrice().substring(0,index+3);
+            holder.price.setText(newprice);
+        }
+        else{
+            holder.price.setText(arrayFavTicker.get(position).getPrice());
+        }
+
+
+
         holder.deltaPrice.setText(arrayFavTicker.get(position).getDeltaPrice());
 
         if (arrayFavTicker.get(position).getDeltaPrice() != null && arrayFavTicker.get(position).getDeltaPrice().startsWith("+")) {

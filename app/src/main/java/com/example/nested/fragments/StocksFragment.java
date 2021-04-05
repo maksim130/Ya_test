@@ -49,6 +49,7 @@ public class StocksFragment extends Fragment {
     public static int refreshFlag = 0;
     static LinearLayoutManager layoutManager;
     static public  boolean backSearchFlag=false;
+    static public  boolean onrefresflag= false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

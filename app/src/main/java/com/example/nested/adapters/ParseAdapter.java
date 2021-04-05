@@ -68,7 +68,16 @@ public class ParseAdapter extends RecyclerView.Adapter<ParseAdapter.ViewHolder> 
 
         holder.tickerName.setText(parseItem.getTickerName());
         holder.companyName.setText(parseItem.getCompanyName());
-        holder.price.setText(parseItem.getPrice());
+
+        int index = parseItem.getPrice().indexOf('.');
+        if (parseItem.getPrice().length()>index+3){
+            String newprice = parseItem.getPrice().substring(0,index+3);
+            holder.price.setText(newprice);
+        }
+        else{
+            holder.price.setText(parseItem.getPrice());
+        }
+
         holder.deltaPrice.setText(parseItem.getDeltaPrice());
 
         if (position % 2 == 0) {
